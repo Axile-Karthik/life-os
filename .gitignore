@@ -1,0 +1,39 @@
+# Java / Gradle
+.gradle/
+build/
+bin/
+out/
+
+# Android
+local.properties
+captures/
+.externalNativeBuild/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# IDE Files
+.idea/
+.vscode/
+*.iml
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment Files
+.env
+.env.local
+
+# Build artifacts and caches
+*.db
+*.sqlite
+coverage/
+tmp/
+.cache/

@@ -1,0 +1,119 @@
+version: "3.8"
+
+# =============================================================
+# Life OS Backend — Docker Compose
+# =============================================================
+# Network: all services join 'lifeos-net' (bridge network).
+#   - Containers reference each other by service name as hostname.
+#   - e.g. the app connects to postgres via jdbc:postgresql://postgres:5432/lifeos
+#   - Prometheus scrapes app:8080/actuator/prometheus
+#   - Grafana queries prometheus:9090
+# =============================================================
+
+services:
+
+  # ----- PostgreSQL 16 -----
+  postgres:
+    image: postgres:16-alpine
+    container_name: lifeos-postgres
+    environment:
+      POSTGRES_DB: lifeos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - lifeos-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----- pgAdmin 4 -----
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: lifeos-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@lifeos.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - lifeos-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ----- Spring Boot App (Commented out for local testing) -----
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: lifeos-app
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_NAME: lifeos
+  #     DB_USER: postgres
+  #     DB_PASSWORD: postgres
+  #     DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - lifeos-net
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 40s
+
+  # ----- Prometheus -----
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: lifeos-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - lifeos-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ----- Grafana -----
+  grafana:
+    image: grafana/grafana:10.4.1
+    container_name: lifeos-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - lifeos-net
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+  pgadmin-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  lifeos-net:
+    driver: bridge

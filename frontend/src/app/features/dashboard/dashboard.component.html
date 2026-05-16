@@ -1,0 +1,70 @@
+<app-page-container>
+  
+  <div class="observatory-dashboard animate-fade-in">
+    <!-- HERO OBSERVATORY -->
+    <section class="dashboard-hero delay-1 animate-fade-in-up">
+      <app-hero-observatory [state]="heroState()"></app-hero-observatory>
+    </section>
+
+    <!-- RECENT MEDIA STRIP -->
+    <section class="dashboard-strip delay-2 animate-fade-in-up">
+      <app-media-strip title="Recent Memory Logs" [state]="recentMediaState()"></app-media-strip>
+    </section>
+
+    <!-- MAIN GRID -->
+    <section class="dashboard-grid">
+      
+      <!-- LEFT COLUMN -->
+      <div class="grid-col-main delay-3 animate-fade-in-up">
+        
+        <div class="modular-row">
+          <app-modular-media 
+            title="Gaming" 
+            icon="🎮" 
+            statusLabel="Playing" 
+            color="var(--accent-secondary)" 
+            [state]="gamesState()">
+          </app-modular-media>
+          
+          <app-modular-media 
+            title="Anime" 
+            icon="⛩️" 
+            statusLabel="Watching" 
+            color="var(--accent-rose)" 
+            [state]="animeState()">
+          </app-modular-media>
+        </div>
+
+        <div class="modular-row">
+          <app-modular-media 
+            title="Reading" 
+            icon="📚" 
+            statusLabel="Reading" 
+            color="var(--accent-emerald)" 
+            [state]="booksState()">
+          </app-modular-media>
+          
+          <app-modular-media 
+            title="Manga" 
+            icon="📖" 
+            statusLabel="Reading" 
+            color="var(--accent-warm)" 
+            [state]="mangaState()">
+          </app-modular-media>
+        </div>
+
+        <app-timeline-feed [state]="timelineState()"></app-timeline-feed>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="grid-col-side delay-4 animate-fade-in-up">
+        <app-quick-actions></app-quick-actions>
+        <app-observability [state]="observabilityState()"></app-observability>
+        <app-tasks-preview [state]="tasksState()"></app-tasks-preview>
+        <app-statistics [state]="statisticsState()"></app-statistics>
+      </div>
+
+    </section>
+  </div>
+
+</app-page-container>

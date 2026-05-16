@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Life OS Tracker</string>
+    <string name="scan_now">Scan Now</string>
+    <string name="empty_state">No activity sessions tracked yet.\nPlay a game and tap Scan!</string>
+    <string name="permission_required">Usage Access permission is required to track activity sessions.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="scanning">Scanning for sessions…</string>
+    <string name="scan_complete">Found %d new session(s)</string>
+    <string name="start_label">Start: %s</string>
+    <string name="end_label">End: %s</string>
+
+    <!-- Tracking service -->
+    <string name="live_tracking">Live Tracking</string>
+    <string name="tracking_active">Scanning every 90 seconds</string>
+    <string name="tracking_inactive">Tap to start real-time tracking</string>
+
+    <!-- Stats -->
+    <string name="activity_stats">Activity Stats</string>
+    <string name="recent_sessions">Recent Sessions</string>
+    <string name="no_stats_yet">No completed sessions yet</string>
+    <string name="session_count_label">%d session(s)</string>
+</resources>
