@@ -30,8 +30,8 @@ class CleanupWorker(
         /** Synced logs older than 1 day are deleted. */
         private const val LOG_RETENTION_MS = 24 * 60 * 60 * 1000L
 
-        /** Synced metrics older than 7 days are deleted. */
-        private const val METRICS_RETENTION_MS = 7 * 24 * 60 * 60 * 1000L
+        /** Synced metrics older than 1 days are deleted. */
+        private const val METRICS_RETENTION_MS =  24 * 60 * 60 * 1000L
 
         /** Open sessions older than 6 hours are marked STALE. */
         private const val STALE_SESSION_THRESHOLD_MS = 6 * 60 * 60 * 1000L

@@ -30,7 +30,7 @@ import com.karthik.lifeos.tracker.logging.TrackerLogger
  * - Unpaired FOREGROUND at end of window → emitted as open session (endTime=0)
  */
 class SessionManager(
-    context: Context,
+    private val context: Context,
     private val dao: ActivitySessionDao
 ) {
 
@@ -68,8 +68,12 @@ class SessionManager(
     suspend fun scanForSessions(startTime: Long, endTime: Long): ScanResult {
         val allEvents = usageTracker.queryEvents(startTime, endTime)
 
-        // Filter to game-only events
-        val gameEvents = allEvents.filter { gameDetector.isGame(it.packageName) }
+        // Filter out our own package (we don't track the tracker) 
+        // and filter to game-only events
+        val gameEvents = allEvents
+            .filter { it.packageName != context.packageName }
+            .filter { gameDetector.isGame(it.packageName) }
+
         Log.d(TAG, "Game events: ${gameEvents.size} out of ${allEvents.size} total events")
 
         // Reconstruct sessions per package

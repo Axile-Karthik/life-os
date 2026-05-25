@@ -1,7 +1,7 @@
 package com.lifeos.telemetry.session.scheduler;
 
 import com.lifeos.common.service.DiscordAlertService;
-import com.lifeos.telemetry.session.service.SessionService;
+import com.lifeos.session.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

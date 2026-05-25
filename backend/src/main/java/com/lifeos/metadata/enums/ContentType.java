@@ -7,6 +7,5 @@ public enum ContentType {
     ANIME,
     BOOK,
     MUSIC,
-    MANGA,
-    ALL
+    MANGA
 }

@@ -1,6 +1,6 @@
 package com.lifeos.telemetry.sync.dto;
 import com.lifeos.observability.metrics.dto.AppMetricsDto;
-import com.lifeos.telemetry.session.dto.SessionDto;
+import com.lifeos.telemetry.sync.dto.SyncSessionDto;
 
 import com.lifeos.observability.log.dto.TrackerLogDto;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +18,7 @@ public class SyncRequest {
     @NotBlank(message = "deviceId is required")
     private String deviceId;
 
-    private List<SessionDto> sessions;
+    private List<SyncSessionDto> sessions;
 
     private List<TrackerLogDto> logs;
 

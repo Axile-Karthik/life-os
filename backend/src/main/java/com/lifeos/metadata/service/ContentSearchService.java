@@ -6,6 +6,7 @@ import com.lifeos.metadata.enums.ContentType;
 import com.lifeos.metadata.provider.MetadataProvider;
 import com.lifeos.metadata.repository.ContentMetadataRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ContentSearchService {
@@ -27,13 +29,14 @@ public class ContentSearchService {
         }
         
         Page<ContentMetadata> localResults;
-        if (type == ContentType.ALL) {
+        if (type == null) {
             localResults = repository.searchByQuery(query, pageable);
         } else {
+            log.info("from DB");
             localResults = repository.searchByQueryAndType(query, type, pageable);
         }
 
-        // Return local results immediately if we found any meaningul tracked content
+        // Return local results immediately if we found any meaningful tracked content
         if (localResults.hasContent()) {
             List<SearchResultDto> dtos = localResults.getContent().stream()
                     .map(this::toDto)
@@ -44,6 +47,7 @@ public class ContentSearchService {
         // Local search returned 0 results. Fallback to external providers for discovery.
         // We only do this on the first page to keep it simple.
         if (pageable.getPageNumber() == 0 && !query.isBlank()) {
+            log.info("from external ------->");
             for (MetadataProvider provider : providers) {
                 if (provider.supports(type)) {
                     List<SearchResultDto> externalResults = provider.search(query);

@@ -24,5 +24,46 @@ export class SessionApiService {
     );
   }
 
-  // Daily Stats, Weekly Stats, Per Game Stats etc can be added here
+  getDailyStats(deviceId?: string, startDate?: string, endDate?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (deviceId) params = params.set('deviceId', deviceId);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+
+    return this.http.get<any[]>(`${environment.apiUrl}/sessions/stats/daily`, { params }).pipe(
+      catchError(err => {
+        this.connectivity.setBackendReachability(false);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  getWeeklyStats(deviceId?: string, startDate?: string, endDate?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (deviceId) params = params.set('deviceId', deviceId);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+
+    return this.http.get<any[]>(`${environment.apiUrl}/sessions/stats/weekly`, { params }).pipe(
+      catchError(err => {
+        this.connectivity.setBackendReachability(false);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  getPerGameStats(deviceId?: string, type?: string, startDate?: string, endDate?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (deviceId) params = params.set('deviceId', deviceId);
+    if (type) params = params.set('type', type);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+
+    return this.http.get<any[]>(`${environment.apiUrl}/sessions/stats/pergame`, { params }).pipe(
+      catchError(err => {
+        this.connectivity.setBackendReachability(false);
+        return throwError(() => err);
+      })
+    );
+  }
 }

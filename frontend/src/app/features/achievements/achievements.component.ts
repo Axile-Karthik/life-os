@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PageContainerComponent } from '../../shared/components/page-container.component';
 import { AppCardComponent } from '../../shared/components/app-card.component';
 import { SectionHeaderComponent } from '../../shared/components/section-header.component';
 import { ProgressBarComponent } from '../../shared/components/progress-bar.component';
-import { MOCK_ACHIEVEMENTS } from '../../shared/data/mock-data';
+import { AchievementsApiService } from '../../core/api/services/achievements-api.service';
+import { Achievement } from '../../shared/models/activity.model';
 
 @Component({
   selector: 'app-achievements',
@@ -34,6 +35,9 @@ import { MOCK_ACHIEVEMENTS } from '../../shared/data/mock-data';
             </div>
           </app-card>
         }
+        @if (achievements.length === 0) {
+          <div class="empty-state">No achievements recorded yet.</div>
+        }
       </div>
     </app-page-container>
   `,
@@ -51,11 +55,22 @@ import { MOCK_ACHIEVEMENTS } from '../../shared/data/mock-data';
     .ach-desc { font-size: 12px; color: var(--text-secondary); margin: 2px 0 6px; }
     .ach-prog { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; display: block; }
     .ach-unlocked { font-size: 11px; color: var(--accent-emerald); font-weight: 500; }
+    .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 14px; grid-column: 1 / -1; }
   `],
 })
-export class AchievementsComponent {
-  achievements = MOCK_ACHIEVEMENTS;
+export class AchievementsComponent implements OnInit {
+  private achievementsApi = inject(AchievementsApiService);
+
+  achievements: Achievement[] = [];
+
+  ngOnInit() {
+    this.achievementsApi.getAchievements().subscribe({
+      next: (data) => this.achievements = data,
+      error: () => this.achievements = []
+    });
+  }
+
   get unlocked() { return this.achievements.filter(a => a.unlocked).length; }
   get total() { return this.achievements.length; }
-  get pct() { return Math.round((this.unlocked / this.total) * 100); }
+  get pct() { return this.total > 0 ? Math.round((this.unlocked / this.total) * 100) : 0; }
 }

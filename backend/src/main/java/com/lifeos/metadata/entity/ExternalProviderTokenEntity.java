@@ -2,6 +2,8 @@ package com.lifeos.metadata.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 
@@ -30,6 +32,7 @@ public class ExternalProviderTokenEntity {
     @Column(name = "expires_at")
     private Instant expiresAt;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String metadata;
 

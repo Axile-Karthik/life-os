@@ -1,16 +1,20 @@
 package com.lifeos.telemetry.sync.service;
 import com.lifeos.common.service.DiscordAlertService;
 
-import com.lifeos.telemetry.session.dto.*;
 import com.lifeos.observability.metrics.dto.*;
 import com.lifeos.telemetry.sync.dto.*;
-import com.lifeos.telemetry.session.entity.*;
+import com.lifeos.session.entity.*;
+import com.lifeos.session.enums.SessionState;
 import com.lifeos.observability.metrics.entity.*;
 import com.lifeos.observability.log.dto.TrackerLogDto;
 import com.lifeos.observability.log.entity.TrackerLog;
 import com.lifeos.observability.log.repository.TrackerLogRepository;
-import com.lifeos.telemetry.session.repository.*;
+import com.lifeos.session.repository.*;
 import com.lifeos.observability.metrics.repository.*;
+import com.lifeos.library.service.LibraryService;
+import com.lifeos.metadata.entity.ContentMetadata;
+import com.lifeos.metadata.enums.ContentType;
+import com.lifeos.metadata.service.MetadataNormalizationService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -39,6 +43,8 @@ public class SyncService {
     private final TrackerLogRepository logRepository;
     private final AppMetricsRepository metricsRepository;
     private final DiscordAlertService discordAlertService;
+    private final LibraryService libraryService;
+    private final MetadataNormalizationService normalizationService;
 
     // Micrometer counters for observability
     private final Counter syncCounter;
@@ -62,11 +68,15 @@ public class SyncService {
                        TrackerLogRepository logRepository,
                        AppMetricsRepository metricsRepository,
                        DiscordAlertService discordAlertService,
+                       LibraryService libraryService,
+                       MetadataNormalizationService normalizationService,
                        MeterRegistry meterRegistry) {
         this.sessionRepository = sessionRepository;
         this.logRepository = logRepository;
         this.metricsRepository = metricsRepository;
         this.discordAlertService = discordAlertService;
+        this.libraryService = libraryService;
+        this.normalizationService = normalizationService;
 
         this.syncCounter = Counter.builder("lifeos.sync.total")
             .description("Total sync requests received")
@@ -156,7 +166,7 @@ public class SyncService {
         });
     }
 
-    private int saveSessions(String deviceId, List<SessionDto> sessionDtos) {
+    private int saveSessions(String deviceId, List<SyncSessionDto> sessionDtos) {
         if (sessionDtos == null || sessionDtos.isEmpty()) {
             return 0;
         }
@@ -164,9 +174,9 @@ public class SyncService {
         List<ActivitySession> toSave = new ArrayList<>();
         int duplicates = 0;
 
-        for (SessionDto dto : sessionDtos) {
+        for (SyncSessionDto dto : sessionDtos) {
             // Check for duplicate using the unique constraint fields
-            boolean exists = sessionRepository.existsByDeviceIdAndPackageNameAndStartTime(
+            boolean exists = sessionRepository.existsBySourcePlatformAndPackageNameAndStartedAt(
                 deviceId, dto.getPackageName(), dto.getStartTime()
             );
 
@@ -177,15 +187,37 @@ public class SyncService {
                 continue;
             }
 
+            // Resolve metadata and update library status
+            ContentMetadata metadata = libraryService.resolveMetadataForSession(
+                dto.getTitle(), dto.getType(), dto.getSource()
+            );
+            libraryService.updateLibraryStatusForSession(
+                metadata, dto.getType(), dto.getStartTime()
+            );
+
+            ContentType type = null;
+            if (dto.getType() != null) {
+                try {
+                    type = ContentType.valueOf(dto.getType().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    // Ignore
+                }
+            }
+
+            long durationSeconds = dto.getDurationMillis() != null ? dto.getDurationMillis() / 1000 : 0;
+            String normalizedTitle = normalizationService.normalizeTitle(dto.getTitle());
+
             ActivitySession session = ActivitySession.builder()
-                .deviceId(deviceId)
-                .source(dto.getSource())
-                .type(dto.getType())
+                .sourcePlatform(dto.getSource())
+                .contentType(type)
                 .packageName(dto.getPackageName())
-                .title(dto.getTitle())
-                .startTime(dto.getStartTime())
-                .endTime(dto.getEndTime())
-                .durationMillis(dto.getDurationMillis())
+                .rawTitle(dto.getTitle())
+                .normalizedTitle(normalizedTitle)
+                .startedAt(dto.getStartTime())
+                .endedAt(dto.getEndTime())
+                .durationSeconds(durationSeconds)
+                .sessionState(SessionState.COMPLETED)
+                .metadata(metadata)
                 .build();
 
             toSave.add(session);

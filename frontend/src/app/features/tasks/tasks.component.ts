@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PageContainerComponent } from '../../shared/components/page-container.component';
 import { AppCardComponent } from '../../shared/components/app-card.component';
 import { SectionHeaderComponent } from '../../shared/components/section-header.component';
-import { MOCK_TASKS } from '../../shared/data/mock-data';
+import { TaskApiService } from '../../core/api/services/task-api.service';
+import { TaskItem } from '../../shared/models/activity.model';
 
 @Component({
   selector: 'app-tasks',
@@ -34,6 +35,9 @@ import { MOCK_TASKS } from '../../shared/data/mock-data';
             </div>
           </app-card>
         }
+        @if (filteredTasks().length === 0) {
+          <div class="empty-state">No tasks found.</div>
+        }
       </div>
     </app-page-container>
   `,
@@ -55,12 +59,23 @@ import { MOCK_TASKS } from '../../shared/data/mock-data';
     .task-priority[data-priority="high"] { color: var(--accent-rose); background: var(--accent-rose-dim); }
     .task-priority[data-priority="medium"] { color: var(--accent-warm); background: var(--accent-warm-dim); }
     .task-priority[data-priority="low"] { color: var(--text-tertiary); background: var(--bg-tertiary); }
+    .empty-state { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 14px; }
   `],
 })
-export class TasksComponent {
-  tasks = [...MOCK_TASKS];
+export class TasksComponent implements OnInit {
+  private taskApi = inject(TaskApiService);
+
+  tasks: TaskItem[] = [];
   filters = ['All', 'Active', 'Completed'];
   activeFilter = 'All';
+
+  ngOnInit() {
+    this.taskApi.getTasks().subscribe({
+      next: (data) => this.tasks = data,
+      error: () => this.tasks = []
+    });
+  }
+
   filteredTasks() {
     if (this.activeFilter === 'Active') return this.tasks.filter(t => !t.completed);
     if (this.activeFilter === 'Completed') return this.tasks.filter(t => t.completed);

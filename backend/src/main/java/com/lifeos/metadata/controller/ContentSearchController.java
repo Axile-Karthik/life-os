@@ -20,12 +20,20 @@ public class ContentSearchController {
     @GetMapping
     public ResponseEntity<Page<SearchResultDto>> searchContent(
             @RequestParam(required = false, defaultValue = "") String query,
-            @RequestParam(required = false, defaultValue = "ALL") ContentType type,
+            @RequestParam(required = false, defaultValue = "ALL") String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<SearchResultDto> results = searchService.searchContent(query, type, pageable);
+        
+        ContentType contentType = null;
+        if (type != null && !type.trim().isEmpty() && !"ALL".equalsIgnoreCase(type)) {
+            try {
+                contentType = ContentType.valueOf(type.toUpperCase());
+            } catch (Exception ignored) {}
+        }
+        
+        Page<SearchResultDto> results = searchService.searchContent(query, contentType, pageable);
         
         return ResponseEntity.ok(results);
     }

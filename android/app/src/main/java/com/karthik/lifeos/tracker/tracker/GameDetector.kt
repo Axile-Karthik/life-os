@@ -83,8 +83,8 @@ class GameDetector(private val context: Context) {
         return try {
             val appInfo = context.packageManager.getApplicationInfo(packageName, 0)
             appInfo.category == ApplicationInfo.CATEGORY_GAME
-        } catch (e: PackageManager.NameNotFoundException) {
-            Log.w(TAG, "Package not found: $packageName")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to detect game for $packageName: ${e.message}")
             false
         }
     }
@@ -94,8 +94,11 @@ class GameDetector(private val context: Context) {
         return try {
             val appInfo = context.packageManager.getApplicationInfo(packageName, 0)
             context.packageManager.getApplicationLabel(appInfo).toString()
-        } catch (e: PackageManager.NameNotFoundException) {
-            packageName // Fallback to package name if app was uninstalled
+        } catch (e: Exception) {
+            // Can happen if the app was uninstalled OR if it's our own app 
+            // and there's a transient PackageManager issue.
+            Log.w(TAG, "Failed to get app name for $packageName: ${e.message}")
+            packageName
         }
     }
 }

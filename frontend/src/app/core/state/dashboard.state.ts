@@ -43,19 +43,33 @@ export class DashboardState {
     const s = this._sessions().data;
     if (!s || s.length === 0) return null;
 
-    // Simple placeholder algorithm: 
-    // Calculate total duration in last 24h as "focus score"
     const now = Date.now();
     const recent = s.filter(x => now - new Date(x.endTime).getTime() < 86400000);
     const totalMillis = recent.reduce((acc, curr) => acc + curr.durationMillis, 0);
     
-    // Fake score: cap at 100 based on some arbitrary max hours (e.g., 8 hours = 100)
     const hours = totalMillis / (1000 * 3600);
     const focusScore = Math.min(100, Math.round((hours / 8) * 100));
 
+    // Dynamic streak calculation: consecutive active days
+    const activeDates = new Set(s.map(x => new Date(x.startTime).toDateString()));
+    let currentStreak = 0;
+    const checkDate = new Date();
+    while (activeDates.has(checkDate.toDateString())) {
+      currentStreak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+    if (currentStreak === 0) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      while (activeDates.has(yesterday.toDateString())) {
+        currentStreak++;
+        yesterday.setDate(yesterday.getDate() - 1);
+      }
+    }
+
     return {
       focusScore,
-      currentStreak: 12, // Mocked for now, requires deeper historical analysis
+      currentStreak,
       totalHours: hours.toFixed(1)
     };
   });

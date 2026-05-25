@@ -48,7 +48,7 @@ public class IGDBProvider implements MetadataProvider {
 
     @Override
     public boolean supports(ContentType contentType) {
-        return contentType == ContentType.GAME || contentType == ContentType.ALL;
+        return contentType == ContentType.GAME || contentType == null;
     }
 
     @Override
@@ -60,26 +60,26 @@ public class IGDBProvider implements MetadataProvider {
 
         String accessToken = tokenService.getAccessToken(PROVIDER_NAME, this::fetchNewTwitchToken);
 
-        // Filter out non-games: 0=main_game, 4=expansion, 8=remake, 9=remaster, 10=expanded_game, 11=port
+        // Simplify query to match working manual curl
         String apicalypseQuery = String.format(
-            "search \"%s\";\n" +
-            "fields id,name,cover.url,first_release_date,category;\n" +
-            "where category = (0,4,8,9,10,11);\n" +
-            "limit 10;",
+            "search \"%s\"; fields id,name,cover.url,first_release_date; limit 10;",
             query.replace("\"", "\\\"")
         );
 
-        log.info("Sending search request to IGDB for query: {}", query);
+        log.info("Sending search request to IGDB for query: [ {} ] with body: [ {} ]", query, apicalypseQuery);
 
         try {
             String response = restClient.post()
                     .uri(IGDB_API_URL)
                     .header("Client-ID", clientId)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(apicalypseQuery)
                     .retrieve()
                     .body(String.class);
+            
+            log.info("IGDB Raw Response: {}", response);
 
             return parseResponse(response);
 

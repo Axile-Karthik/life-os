@@ -16,7 +16,7 @@ android {
         versionName = "2.0"
 
         // Backend URL (Tailscale VPN) — change this to your Tailscale IP
-        buildConfigField("String", "BACKEND_URL", "\"http://100.66.65.101:8080/\"")
+        buildConfigField("String", "BACKEND_URL", "\"http://100.92.61.53:8080/\"")
     }
 
     buildFeatures {
@@ -54,7 +54,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
     // Room Database
-    val roomVersion = "2.6.1"
+    val roomVersion = "2.7.0-alpha13"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")

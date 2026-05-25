@@ -48,7 +48,7 @@ import { NavItem } from '../../shared/models/activity.model';
     .sidebar__title { font-size: 16px; font-weight: 800; letter-spacing: 0.1em; color: var(--text-primary); }
     .sidebar__subtitle { font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em; margin-top: 1px; }
     .sidebar__nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-    .sidebar__link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-md); color: var(--text-secondary); transition: all var(--transition-fast); text-decoration: none; font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .sidebar__link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-lg); color: var(--text-secondary); transition: all var(--transition-fast); text-decoration: none; font-size: 14px; font-weight: 500; white-space: nowrap; }
     .sidebar__link:hover { color: var(--text-primary); background: rgba(139,92,246,0.08); }
     .sidebar__link--active { color: var(--accent-primary); background: var(--accent-primary-dim); }
     .sidebar__link--active .sidebar__link-icon { color: var(--accent-primary); }
@@ -56,7 +56,7 @@ import { NavItem } from '../../shared/models/activity.model';
     .sidebar__link-icon :deep(svg) { width: 20px; height: 20px; }
     .sidebar__link-label { overflow: hidden; text-overflow: ellipsis; }
     .sidebar__footer { padding: 12px 8px; border-top: 1px solid var(--sidebar-border); }
-    .sidebar__collapse-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-md); color: var(--text-tertiary); transition: all var(--transition-fast); width: 100%; font-size: 13px; }
+    .sidebar__collapse-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-lg); color: var(--text-tertiary); transition: all var(--transition-fast); width: 100%; font-size: 13px; }
     .sidebar__collapse-btn:hover { color: var(--text-primary); background: rgba(139,92,246,0.08); }
     .sidebar__backdrop { display: none; }
     @media (max-width: 768px) {
