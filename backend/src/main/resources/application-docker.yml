@@ -1,0 +1,17 @@
+# =============================================================
+# Life OS — Docker / Production Profile
+# =============================================================
+# Active when running inside a container on infra-net.
+# Resolves 'postgres' via Docker internal DNS.
+# Set via: SPRING_PROFILES_ACTIVE=docker
+# =============================================================
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:life_os}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    com.lifeos: INFO

@@ -1,0 +1,23 @@
+# =============================================================
+# Life OS — Local Development (Optional DB Container)
+# =============================================================
+# Usage: docker compose -f docker-compose.dev.yml up -d
+# Only starts a local postgres if you don't have one installed.
+# Backend and frontend should be run directly from IDE/CLI.
+# =============================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lifeos-dev-postgres
+    environment:
+      POSTGRES_DB: life_os
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - lifeos_dev_pgdata:/var/lib/postgresql/data
+
+volumes:
+  lifeos_dev_pgdata:

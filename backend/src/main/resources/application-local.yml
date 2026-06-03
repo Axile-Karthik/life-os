@@ -1,0 +1,17 @@
+# =============================================================
+# Life OS — Local Development Profile
+# =============================================================
+# Active when running from IDE or CLI without Docker.
+# Connects to localhost PostgreSQL.
+# Usage: mvn spring-boot:run -Dspring-boot.run.profiles=local
+# =============================================================
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/life_os
+    username: postgres
+    password: localpassword
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    com.lifeos: DEBUG

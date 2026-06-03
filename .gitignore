@@ -1,39 +1,50 @@
-# Java / Gradle
-.gradle/
-build/
-bin/
-out/
+# =========================================================================
+# Life OS Root Git Ignore File
+# =========================================================================
 
-# Android
-local.properties
-captures/
-.externalNativeBuild/
+# Maven Build Outputs
+**/target/
+**/target/**
+*.class
+*.jar
+*.war
+*.ear
 
-# Node / Angular
-node_modules/
-dist/
-.angular/
+# Gradle Build Outputs
+**/.gradle/
+**/build/
+**/bin/
 
-# IDE Files
+# Node / Angular / Web Outputs
+**/node_modules/
+**/dist/
+**/.angular/
+**/.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# IDEs and Editors
 .idea/
-.vscode/
 *.iml
+*.ipr
+*.iws
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.classpath
+.project
+.settings/
+.factorypath
 
-# OS Files
+# OS and Log Files
 .DS_Store
 Thumbs.db
-
-# Logs
 *.log
 logs/
 
-# Environment Files
+# Local configuration overrides
 .env
 .env.local
-
-# Build artifacts and caches
-*.db
-*.sqlite
-coverage/
-tmp/
-.cache/
+.env.*.local

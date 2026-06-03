@@ -1,0 +1,46 @@
+# =============================================================
+# Life OS — Production Deployment
+# =============================================================
+# Requires: infra stack running first (docker compose up -d)
+# Usage:    docker compose -f docker-compose.prod.yml up -d --build
+# =============================================================
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lifeos-backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=life_os
+      - DB_USER=postgres
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lifeos-frontend
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: lifeos-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@lifeos.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+
+volumes:
+  pgadmin_data:
+
+networks:
+  default:
+    name: infra-net
+    external: true
