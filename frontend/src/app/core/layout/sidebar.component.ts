@@ -6,66 +6,8 @@ import { NavItem } from '../../shared/models/activity.model';
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
-  template: `
-    <aside class="sidebar" [class.sidebar--collapsed]="collapsed()" [class.sidebar--open]="mobileOpen()">
-      <div class="sidebar__brand">
-        <div class="sidebar__logo">
-          <div class="sidebar__logo-orb"></div>
-        </div>
-        @if (!collapsed()) {
-          <div class="sidebar__brand-text">
-            <h1 class="sidebar__title">LIFE OS</h1>
-            <p class="sidebar__subtitle">Your Universe. Your System.</p>
-          </div>
-        }
-      </div>
-      <nav class="sidebar__nav">
-        @for (item of navItems; track item.route) {
-          <a class="sidebar__link" [routerLink]="item.route" routerLinkActive="sidebar__link--active" [title]="item.label">
-            <span class="sidebar__link-icon" [innerHTML]="getIcon(item.icon)"></span>
-            @if (!collapsed()) { <span class="sidebar__link-label">{{ item.label }}</span> }
-          </a>
-        }
-      </nav>
-      <div class="sidebar__footer">
-        <button class="sidebar__collapse-btn" (click)="toggleCollapse.emit()" [title]="collapsed() ? 'Expand' : 'Collapse'">
-          <span class="sidebar__link-icon" [innerHTML]="collapsed() ? expandIcon : collapseIcon"></span>
-          @if (!collapsed()) { <span class="sidebar__link-label">Collapse</span> }
-        </button>
-      </div>
-    </aside>
-    @if (mobileOpen()) {
-      <div class="sidebar__backdrop" (click)="closeMobile.emit()"></div>
-    }
-  `,
-  styles: [`
-    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-width); background: var(--sidebar-bg); backdrop-filter: blur(var(--blur-lg)); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; z-index: 100; transition: width var(--transition-base), transform var(--transition-base); overflow: hidden; }
-    .sidebar--collapsed { width: var(--sidebar-width-collapsed); }
-    .sidebar__brand { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid var(--sidebar-border); min-height: 72px; }
-    .sidebar__logo { flex-shrink: 0; }
-    .sidebar__logo-orb { width: 32px; height: 32px; border-radius: 50%; background: var(--gradient-accent); box-shadow: 0 0 20px rgba(139,92,246,0.4); animation: orbFloat 6s ease-in-out infinite; }
-    .sidebar__brand-text { overflow: hidden; white-space: nowrap; }
-    .sidebar__title { font-size: 16px; font-weight: 800; letter-spacing: 0.1em; color: var(--text-primary); }
-    .sidebar__subtitle { font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em; margin-top: 1px; }
-    .sidebar__nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-    .sidebar__link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-lg); color: var(--text-secondary); transition: all var(--transition-fast); text-decoration: none; font-size: 14px; font-weight: 500; white-space: nowrap; }
-    .sidebar__link:hover { color: var(--text-primary); background: rgba(139,92,246,0.08); }
-    .sidebar__link--active { color: var(--accent-primary); background: var(--accent-primary-dim); }
-    .sidebar__link--active .sidebar__link-icon { color: var(--accent-primary); }
-    .sidebar__link-icon { flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
-    .sidebar__link-icon :deep(svg) { width: 20px; height: 20px; }
-    .sidebar__link-label { overflow: hidden; text-overflow: ellipsis; }
-    .sidebar__footer { padding: 12px 8px; border-top: 1px solid var(--sidebar-border); }
-    .sidebar__collapse-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-lg); color: var(--text-tertiary); transition: all var(--transition-fast); width: 100%; font-size: 13px; }
-    .sidebar__collapse-btn:hover { color: var(--text-primary); background: rgba(139,92,246,0.08); }
-    .sidebar__backdrop { display: none; }
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); width: 280px; }
-      .sidebar--open { transform: translateX(0); }
-      .sidebar--collapsed { width: 280px; }
-      .sidebar__backdrop { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-    }
-  `],
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
   collapsed = input<boolean>(false);

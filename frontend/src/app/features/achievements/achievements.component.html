@@ -1,0 +1,29 @@
+<app-page-container>
+  <app-section-header title="Achievements" subtitle="Your milestones" />
+  <div class="ach-stats">
+    <div class="ach-stat"><span class="ach-stat__val">{{ unlocked }}</span><span class="ach-stat__label">Unlocked</span></div>
+    <div class="ach-stat"><span class="ach-stat__val">{{ total }}</span><span class="ach-stat__label">Total</span></div>
+    <div class="ach-stat"><span class="ach-stat__val">{{ pct }}%</span><span class="ach-stat__label">Completion</span></div>
+  </div>
+  <div class="ach-grid">
+    @for (a of achievements; track a.id) {
+      <app-card [hoverable]="true" padding="compact">
+        <div class="ach-item" [class.ach-item--locked]="!a.unlocked">
+          <span class="ach-icon">{{ a.icon }}</span>
+          <div class="ach-info">
+            <h4 class="ach-name">{{ a.title }}</h4>
+            <p class="ach-desc">{{ a.description }}</p>
+            @if (!a.unlocked && a.maxProgress) {
+              <app-progress-bar [value]="(a.progress||0)/(a.maxProgress)*100" />
+              <span class="ach-prog">{{ a.progress }}/{{ a.maxProgress }}</span>
+            }
+            @if (a.unlocked) { <span class="ach-unlocked">✓ Unlocked {{ a.unlockedAt }}</span> }
+          </div>
+        </div>
+      </app-card>
+    }
+    @if (achievements.length === 0) {
+      <div class="empty-state">No achievements recorded yet.</div>
+    }
+  </div>
+</app-page-container>

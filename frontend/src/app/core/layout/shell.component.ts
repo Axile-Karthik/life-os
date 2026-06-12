@@ -8,59 +8,8 @@ import { MobileNavComponent } from './mobile-nav.component';
   selector: 'app-shell',
   standalone: true,
   imports: [RouterOutlet, SidebarComponent, TopbarComponent, MobileNavComponent],
-  template: `
-    <div class="shell" [class.shell--collapsed]="sidebarCollapsed()">
-      <app-sidebar [collapsed]="sidebarCollapsed()" [mobileOpen]="mobileMenuOpen()" (toggleCollapse)="toggleSidebar()" (closeMobile)="mobileMenuOpen.set(false)" />
-      <div class="shell__main">
-        <app-topbar (menuToggle)="mobileMenuOpen.set(!mobileMenuOpen())" />
-        <main class="shell__content">
-          <router-outlet />
-        </main>
-      </div>
-      <app-mobile-nav />
-    </div>
-  `,
-  styles: [`
-    .shell { 
-      display: flex; 
-      min-height: 100vh; 
-      background-image: 
-        radial-gradient(circle at 50% -10%, rgba(139, 92, 246, 0.22) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 80%),
-        url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=1920&q=80');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      background-color: #040814;
-    }
-    .shell__main { 
-      flex: 1; 
-      margin-left: var(--sidebar-width); 
-      transition: margin-left var(--transition-base); 
-      display: flex; 
-      flex-direction: column; 
-      min-height: 100vh; 
-      position: relative;
-    }
-    .shell__main::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 300px;
-      background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.22) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 80%);
-      filter: blur(50px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .shell--collapsed .shell__main { margin-left: var(--sidebar-width-collapsed); }
-    .shell__content { flex: 1; overflow-y: auto; z-index: 1; }
-    @media (max-width: 768px) {
-      .shell__main { margin-left: 0 !important; }
-      .shell__content { padding-bottom: 70px; }
-    }
-  `],
+  templateUrl: './shell.component.html',
+  styleUrl: './shell.component.css',
 })
 export class ShellComponent {
   sidebarCollapsed = signal(false);

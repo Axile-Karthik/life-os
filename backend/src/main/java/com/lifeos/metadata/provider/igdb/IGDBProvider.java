@@ -43,7 +43,13 @@ public class IGDBProvider implements MetadataProvider {
         this.clientSecret = clientSecret;
         this.tokenService = tokenService;
         this.objectMapper = objectMapper;
-        this.restClient = RestClient.create();
+        
+        org.springframework.http.client.SimpleClientHttpRequestFactory requestFactory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000);
+        requestFactory.setReadTimeout(10000);
+        this.restClient = RestClient.builder()
+                .requestFactory(requestFactory)
+                .build();
     }
 
     @Override

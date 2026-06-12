@@ -1,0 +1,30 @@
+<app-page-container>
+  <app-section-header title="Tasks" subtitle="Your activity goals" />
+  <div class="task-filters">
+    @for (f of filters; track f) {
+      <button class="tf" [class.tf--active]="f === activeFilter" (click)="activeFilter = f">{{ f }}</button>
+    }
+  </div>
+  <div class="task-list">
+    @for (task of filteredTasks(); track task.id) {
+      <app-card [hoverable]="true" padding="compact">
+        <div class="task-row">
+          <button class="task-check" [class.task-check--done]="task.completed" (click)="task.completed = !task.completed">
+            @if (task.completed) { <span>✓</span> }
+          </button>
+          <div class="task-info" [class.task-info--done]="task.completed">
+            <span class="task-title">{{ task.title }}</span>
+            <div class="task-meta">
+              <span class="task-cat">{{ task.category }}</span>
+              @if (task.dueDate) { <span class="task-due">{{ task.dueDate }}</span> }
+            </div>
+          </div>
+          <span class="task-priority" [attr.data-priority]="task.priority">{{ task.priority }}</span>
+        </div>
+      </app-card>
+    }
+    @if (filteredTasks().length === 0) {
+      <div class="empty-state">No tasks found.</div>
+    }
+  </div>
+</app-page-container>

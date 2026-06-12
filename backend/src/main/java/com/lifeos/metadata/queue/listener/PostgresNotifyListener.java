@@ -18,8 +18,16 @@ import java.sql.Statement;
 @RequiredArgsConstructor
 public class PostgresNotifyListener implements CommandLineRunner {
 
-    private final DataSource dataSource;
     private final MetadataEnrichmentWorker enrichmentWorker;
+
+    @org.springframework.beans.factory.annotation.Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @org.springframework.beans.factory.annotation.Value("${spring.datasource.password}")
+    private String dbPassword;
     
     private volatile boolean isRunning = true;
     private Thread listenerThread;
@@ -34,7 +42,7 @@ public class PostgresNotifyListener implements CommandLineRunner {
 
     private void listenLoop() {
         while (isRunning) {
-            try (Connection conn = dataSource.getConnection()) {
+            try (Connection conn = java.sql.DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
                 // Unwrap the Postgres connection safely
                 PGConnection pgConn = conn.unwrap(PGConnection.class);
 

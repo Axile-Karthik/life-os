@@ -1,0 +1,58 @@
+<app-page-container>
+  <app-section-header title="Observatory" subtitle="System health & tracker status" />
+  
+  @if (metricsState().loading && !metricsState().data) {
+    <div class="obs-grid">
+      @for (i of [1,2,3,4]; track i) {
+        <app-card [hoverable]="false">
+          <div class="obs-metric">
+            <div class="skeleton-dot skeleton-glow" style="width: 28px; height: 28px;"></div>
+            <div class="obs-metric__info">
+              <div class="skeleton-shimmer" style="width: 60px; height: 12px; border-radius: 4px; margin-bottom: 6px;"></div>
+              <div class="skeleton-shimmer" style="width: 80px; height: 16px; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </app-card>
+      }
+    </div>
+  } @else if (metricsState().data) {
+    <div class="obs-grid">
+      @for (metric of displayMetrics(); track metric.label) {
+        <app-card [hoverable]="true">
+          <div class="obs-metric">
+            <div class="obs-metric__icon" [style.color]="metric.color">{{ metric.icon }}</div>
+            <div class="obs-metric__info">
+              <div class="obs-metric__label">{{ metric.label }}</div>
+              <div class="obs-metric__value" [style.color]="metric.color">{{ metric.value }}</div>
+            </div>
+            <div class="obs-metric__status" [style.color]="metric.statusColor">{{ metric.status }}</div>
+          </div>
+        </app-card>
+      }
+    </div>
+  } @else if (metricsState().error) {
+    <div class="empty-state error-state">Failed to load system metrics.</div>
+  }
+  
+  <app-section-header title="Activity Pulse" subtitle="Real-time tracker activity" />
+  <app-card>
+    <div class="obs-pulse">
+      @for (bar of pulseData; track $index) {
+        <div class="obs-pulse__bar" [style.height.%]="bar" [style.background]="'var(--accent-primary)'"></div>
+      }
+    </div>
+  </app-card>
+  
+  <app-section-header title="Connections" />
+  <div class="obs-connections">
+    @for (conn of connections(); track conn.name) {
+      <app-card [hoverable]="true" padding="compact">
+        <div class="obs-conn">
+          <span class="obs-conn__dot" [style.background]="conn.connected ? 'var(--accent-emerald)' : 'var(--accent-rose)'"></span>
+          <span class="obs-conn__name">{{ conn.name }}</span>
+          <span class="obs-conn__status">{{ conn.connected ? 'Connected' : 'Offline' }}</span>
+        </div>
+      </app-card>
+    }
+  </div>
+</app-page-container>

@@ -1,0 +1,33 @@
+<app-page-container>
+  <app-section-header title="Settings" subtitle="Customize your experience" />
+  <app-card>
+    <h3 class="set-section">Theme</h3>
+    <div class="theme-grid">
+      @for (theme of themeService.themes; track theme.key) {
+        <button class="theme-option" [class.theme-option--active]="themeService.currentTheme().key === theme.key" (click)="themeService.setTheme(theme.key)">
+          <div class="theme-preview" [style.background]="theme.variables['--bg-primary']">
+            <div class="theme-preview__accent" [style.background]="theme.variables['--accent-primary']"></div>
+          </div>
+          <span class="theme-option__name">{{ theme.name }}</span>
+        </button>
+      }
+    </div>
+  </app-card>
+  <app-card>
+    <h3 class="set-section">Display</h3>
+    <div class="set-row"><span>Animations</span><span class="set-badge">Enabled</span></div>
+    <div class="set-row"><span>Compact Mode</span><span class="set-badge set-badge--off">Disabled</span></div>
+    <div class="set-row"><span>Sidebar Auto-collapse</span><span class="set-badge set-badge--off">Disabled</span></div>
+  </app-card>
+  <app-card>
+    <h3 class="set-section">Data</h3>
+    <div class="set-row"><span>Export Data</span><span class="set-action">Coming Soon</span></div>
+    <div class="set-row"><span>Import Data</span><span class="set-action">Coming Soon</span></div>
+    <div class="set-row"><span>Clear Cache</span><span class="set-action">Coming Soon</span></div>
+  </app-card>
+  <app-card>
+    <h3 class="set-section">About</h3>
+    <div class="set-row"><span>Version</span><span class="set-val">1.0.0-alpha</span></div>
+    <div class="set-row"><span>Phase</span><span class="set-val">Phase 1 — Frontend Foundation</span></div>
+  </app-card>
+</app-page-container>

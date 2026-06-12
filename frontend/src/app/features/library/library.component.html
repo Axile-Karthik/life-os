@@ -1,0 +1,262 @@
+<app-page-container>
+  
+  <div class="library-layout">
+    
+    <!-- MAIN CONTENT COLUMN -->
+    <div class="library-main">
+      
+      <!-- Library Header -->
+      <div class="library-header">
+        <h1 class="library-title">Library</h1>
+        <p class="library-subtitle">Your media universe</p>
+      </div>
+
+      <!-- SEARCH BAR CONTAINER -->
+      <div class="search-container" #searchContainer>
+        <div class="search-bar">
+          <span class="material-symbols-rounded" style="margin-right: 14px; font-size: 24px; color: rgba(255,255,255,0.42);">search</span>
+          <input 
+            type="text" 
+            [formControl]="searchControl"
+            placeholder="Search for games, movies, anime, books and more..." 
+            class="search-input" 
+            (focus)="showResults = true"
+          />
+          @if (loading()) {
+            <div class="search-pill__loader" style="margin-right: 14px;"></div>
+          }
+          <button class="search-pill__add-btn" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; display: flex; align-items: center;">
+            <span class="material-symbols-rounded">add</span>
+          </button>
+        </div>
+
+        <!-- Discovery Overlay -->
+        @if (showResults && (searchResults().length > 0 || loading() || error())) {
+          <div class="search-overlay">
+            <div class="search-overlay__header">
+              <span class="search-overlay__title">Discovery Results</span>
+              <button class="search-overlay__close" (click)="showResults = false">
+                <span class="material-symbols-rounded">close</span>
+              </button>
+            </div>
+            <div class="search-overlay__content">
+              @if (loading()) {
+                <div class="search-skeleton">
+                  @for (i of [1,2,3]; track i) {
+                    <div class="skeleton-item">
+                      <div class="skeleton-thumb"></div>
+                      <div class="skeleton-info">
+                        <div class="skeleton-line line-title"></div>
+                        <div class="skeleton-line line-meta"></div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else if (error()) {
+                <div class="search-empty">
+                  <span class="material-symbols-rounded">error</span>
+                  <p>Failed to fetch results. Check connection.</p>
+                </div>
+              } @else if (searchResults().length === 0) {
+                <div class="search-empty">
+                  <span class="material-symbols-rounded">search_off</span>
+                  <p>No external results found for "{{ searchControl.value }}"</p>
+                </div>
+              } @else {
+                <div class="search-list">
+                  @for (item of searchResults(); track item.id) {
+                    <app-media-search-item [item]="item" (select)="onExternalSelect($event)" />
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- TABS (Centered) -->
+      <div class="filter-row" style="justify-content: center;">
+        @for (t of tabs; track t) {
+          <button class="filter-chip" [class.active]="t === activeTab()" (click)="activeTab.set(t)">{{ t }}</button>
+        }
+      </div>
+
+      <!-- CONTINUE PLAYING (Horizontal Scroll) -->
+      @if (continuePlayingItems().length > 0 && activeTab() === 'All') {
+        <section style="margin-bottom: 40px; position: relative;">
+          <h3 class="section-title">Continue Playing</h3>
+          <div class="continue-row">
+            @for (item of continuePlayingItems(); track item.id) {
+              <div class="continue-card">
+                <div style="position: relative; overflow: hidden;">
+                  <img class="continue-poster" [src]="item.imageUrl" [alt]="item.title" (error)="handleImageError($event)" loading="lazy" />
+                  <span class="status-badge" [attr.data-status]="item.status" style="position: absolute; top: 12px; left: 12px; z-index: 2;">{{ item.status }}</span>
+                </div>
+                <div class="continue-content">
+                  <h4 class="continue-title">{{ item.title }}</h4>
+                  <p class="continue-subtitle">{{ item.subtitle }}</p>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="item.progress"></div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- YOUR LIBRARY (Grid) -->
+      <section style="position: relative;">
+        <h3 class="section-title">Your Library</h3>
+        <div class="library-grid">
+          @for (item of libraryGridItems(); track item.id) {
+            <div class="library-card">
+              <div style="position: relative; overflow: hidden;">
+                <img class="library-poster" [src]="item.imageUrl" [alt]="item.title" (error)="handleImageError($event)" loading="lazy" />
+                <span class="status-badge" [attr.data-status]="item.status" style="position: absolute; top: 12px; left: 12px; z-index: 2;">{{ item.status }}</span>
+                @if (item.rating) {
+                  <span class="rating-badge" style="position: absolute; top: 12px; right: 12px; z-index: 2;">★ {{ item.rating }}</span>
+                }
+              </div>
+              <div class="library-card-content">
+                <h4 class="library-card-title">{{ item.title }}</h4>
+                <p class="library-card-subtitle">{{ item.subtitle }}</p>
+              </div>
+            </div>
+          }
+        </div>
+        @if (libraryGridItems().length === 0) {
+          <div class="empty-state" style="text-align: center; color: rgba(255,255,255,0.4); padding: 40px; background: rgba(255,255,255,0.02); border-radius: 24px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 24px;">No media logs found. Log activities to populate your library.</div>
+        }
+        @if (libraryGridItems().length > 0) {
+          <div class="load-more-container" style="display: flex; justify-content: center; margin-top: 32px;">
+            <button class="load-more-btn">
+              Load More <span class="material-symbols-rounded">expand_more</span>
+            </button>
+          </div>
+        }
+      </section>
+    </div>
+
+    <!-- RIGHT SIDEBAR COLUMN -->
+    <div class="library-sidebar">
+      
+      <!-- ACTIVITY OVERVIEW -->
+      <div class="sidebar-widget">
+        <div class="sidebar-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <span>Activity Overview</span>
+          <select class="widget-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: white; border-radius: 8px; padding: 4px 8px; font-size: 12px; outline: none; cursor: pointer;">
+            <option style="background: #0f172a;">This Week</option>
+            <option style="background: #0f172a;">This Month</option>
+          </select>
+        </div>
+        
+        <div class="overview-list" style="display: flex; flex-direction: column; gap: 18px;">
+          <div class="stat-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+            <div>
+              <div class="stat-label">Total Time</div>
+              <div class="stat-value">{{ totalDurationFormatted() }}</div>
+            </div>
+            <svg class="overview-sparkline" viewBox="0 0 100 30" style="width: 80px; height: 30px; stroke: #a855f7; stroke-width: 2; fill: none;">
+              <path d="M0,25 Q15,5 30,20 T60,10 T90,22 T100,5"></path>
+            </svg>
+          </div>
+          <div class="stat-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+            <div>
+              <div class="stat-label">Sessions</div>
+              <div class="stat-value">{{ sessionsCount() }}</div>
+            </div>
+            <svg class="overview-sparkline" viewBox="0 0 100 30" style="width: 80px; height: 30px; stroke: #a855f7; stroke-width: 2; fill: none;">
+              <path d="M0,15 Q20,25 40,10 T80,20 T100,5"></path>
+            </svg>
+          </div>
+          <div class="stat-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+            <div>
+              <div class="stat-label">Completed</div>
+              <div class="stat-value">{{ completedCount() }}</div>
+            </div>
+            <svg class="overview-sparkline" viewBox="0 0 100 30" style="width: 80px; height: 30px; stroke: #a855f7; stroke-width: 2; fill: none;">
+              <path d="M0,20 Q25,5 50,22 T80,12 T100,25"></path>
+            </svg>
+          </div>
+          <div class="stat-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+            <div>
+              <div class="stat-label">Streak</div>
+              <div class="stat-value">{{ streakDays() }} days</div>
+            </div>
+            <svg class="overview-sparkline" viewBox="0 0 100 30" style="width: 80px; height: 30px; stroke: #a855f7; stroke-width: 2; fill: none;">
+              <path d="M0,22 Q30,12 60,25 T100,5"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="sidebar-widget">
+        <div class="sidebar-title">Recent Activity</div>
+        <div class="recent-list" style="display: flex; flex-direction: column; gap: 14px;">
+          @for (act of recentActivities(); track act.id) {
+            <div class="recent-item" style="display: flex; align-items: center; gap: 12px;">
+              <img class="recent-thumb" [src]="act.imageUrl" [alt]="act.title" (error)="handleImageError($event)" style="width: 38px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);" />
+              <div class="recent-info" style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                <span class="recent-name" style="font-size: 13.5px; font-weight: 600; color: white;">{{ act.title }}</span>
+                <span class="recent-desc" style="font-size: 11px; color: rgba(255,255,255,0.5);">{{ act.desc }}</span>
+              </div>
+              <span class="recent-time" style="font-size: 10.5px; color: rgba(255,255,255,0.4);">{{ act.time }}</span>
+            </div>
+          }
+          @if (recentActivities().length === 0) {
+            <div class="recent-empty" style="text-align: center; color: rgba(255,255,255,0.4); padding: 12px; font-size: 13px;">No recent logs.</div>
+          }
+        </div>
+      </div>
+
+      <!-- QUICK STATS -->
+      <div class="sidebar-widget">
+        <div class="sidebar-title">Quick Stats</div>
+        <div class="quick-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+          <div class="quick-card" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 16px;">
+            <span class="quick-icon-wrapper" style="font-size: 20px;">🎮</span>
+            <div class="quick-info" style="display: flex; flex-direction: column; gap: 1px;">
+              <span class="quick-label" style="font-size: 11px; color: rgba(255,255,255,0.5);">Games</span>
+              <span class="quick-count" style="font-size: 16px; font-weight: 700;">{{ categoryCounts().games }}</span>
+            </div>
+          </div>
+          <div class="quick-card" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 16px;">
+            <span class="quick-icon-wrapper" style="font-size: 20px;">🎬</span>
+            <div class="quick-info" style="display: flex; flex-direction: column; gap: 1px;">
+              <span class="quick-label" style="font-size: 11px; color: rgba(255,255,255,0.5);">Movies</span>
+              <span class="quick-count" style="font-size: 16px; font-weight: 700;">{{ categoryCounts().movies }}</span>
+            </div>
+          </div>
+          <div class="quick-card" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 16px;">
+            <span class="quick-icon-wrapper" style="font-size: 20px;">⛩️</span>
+            <div class="quick-info" style="display: flex; flex-direction: column; gap: 1px;">
+              <span class="quick-label" style="font-size: 11px; color: rgba(255,255,255,0.5);">Anime</span>
+              <span class="quick-count" style="font-size: 16px; font-weight: 700;">{{ categoryCounts().anime }}</span>
+            </div>
+          </div>
+          <div class="quick-card" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 16px;">
+            <span class="quick-icon-wrapper" style="font-size: 20px;">📚</span>
+            <div class="quick-info" style="display: flex; flex-direction: column; gap: 1px;">
+              <span class="quick-label" style="font-size: 11px; color: rgba(255,255,255,0.5);">Books</span>
+              <span class="quick-count" style="font-size: 16px; font-weight: 700;">{{ categoryCounts().books }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="quick-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+          <div class="quick-footer__total" style="display: flex; flex-direction: column; gap: 2px;">
+            <span class="total-label" style="font-size: 11px; color: rgba(255,255,255,0.5);">Total Media</span>
+            <span class="total-val" style="font-size: 22px; font-weight: 800; color: white;">{{ uniqueMediaCount() }}</span>
+          </div>
+          <button class="total-action-btn" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(168,85,247,0.8), rgba(139,92,246,0.8)); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(168,85,247,0.4); transition: transform 0.2s ease;">
+            <span class="material-symbols-rounded">cyclone</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</app-page-container>

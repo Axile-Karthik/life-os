@@ -1,0 +1,57 @@
+<app-page-container>
+  <app-section-header title="Statistics" subtitle="Analytics layer" />
+  <div class="stat-tabs">
+    @for (t of tabs; track t) {
+      <button class="stab" [class.stab--active]="t === activeTab" (click)="activeTab = t">{{ t }}</button>
+    }
+  </div>
+  <div class="stat-top">
+    @for (s of topStats; track s.label) {
+      <app-stats-card [label]="s.label" [value]="s.value" [change]="s.change||''" [trend]="s.trend||'neutral'" [color]="s.color||''" />
+    }
+  </div>
+  <div class="stat-grid">
+    <app-widget-container title="Weekly Activity">
+      <div class="bar-chart">
+        @for (d of weekly; track d.day) {
+          <div class="bar-col">
+            <div class="bar" [style.height.%]="getBarHeightPct(d.hours)"></div>
+            <span class="bar-label">{{ d.day }}</span>
+          </div>
+        }
+        @if (weekly.length === 0) {
+          <div class="empty-state">No weekly activity data found.</div>
+        }
+      </div>
+    </app-widget-container>
+    <app-widget-container title="Category Breakdown">
+      <div class="cat-list">
+        @for (c of categories; track c.category) {
+          <div class="cat-row">
+            <span class="cat-dot" [style.background]="c.color"></span>
+            <span class="cat-name">{{ c.category }}</span>
+            <div class="cat-bar"><div class="cat-fill" [style.width.%]="c.value" [style.background]="c.color"></div></div>
+            <span class="cat-pct">{{ c.value }}%</span>
+          </div>
+        }
+        @if (categories.length === 0) {
+          <div class="empty-state">No category data.</div>
+        }
+      </div>
+    </app-widget-container>
+    <app-widget-container title="Heatmap">
+      <div class="heat-grid">
+        @for (week of heatmap; track $index) {
+          @for (v of week; track $index) {
+            <div class="heat-cell" [style.background]="getHC(v)" [title]="v + ' hours'"></div>
+          }
+        }
+      </div>
+    </app-widget-container>
+    <app-widget-container title="Rating Distribution">
+      <div class="rdist">
+        <div class="empty-state">Rating metrics pending API integration.</div>
+      </div>
+    </app-widget-container>
+  </div>
+</app-page-container>

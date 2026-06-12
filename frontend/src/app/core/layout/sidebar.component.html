@@ -1,0 +1,30 @@
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed()" [class.sidebar--open]="mobileOpen()">
+  <div class="sidebar__brand">
+    <div class="sidebar__logo">
+      <div class="sidebar__logo-orb"></div>
+    </div>
+    @if (!collapsed()) {
+      <div class="sidebar__brand-text">
+        <h1 class="sidebar__title">LIFE OS</h1>
+        <p class="sidebar__subtitle">Your Universe. Your System.</p>
+      </div>
+    }
+  </div>
+  <nav class="sidebar__nav">
+    @for (item of navItems; track item.route) {
+      <a class="sidebar__link" [routerLink]="item.route" routerLinkActive="sidebar__link--active" [title]="item.label">
+        <span class="sidebar__link-icon" [innerHTML]="getIcon(item.icon)"></span>
+        @if (!collapsed()) { <span class="sidebar__link-label">{{ item.label }}</span> }
+      </a>
+    }
+  </nav>
+  <div class="sidebar__footer">
+    <button class="sidebar__collapse-btn" (click)="toggleCollapse.emit()" [title]="collapsed() ? 'Expand' : 'Collapse'">
+      <span class="sidebar__link-icon" [innerHTML]="collapsed() ? expandIcon : collapseIcon"></span>
+      @if (!collapsed()) { <span class="sidebar__link-label">Collapse</span> }
+    </button>
+  </div>
+</aside>
+@if (mobileOpen()) {
+  <div class="sidebar__backdrop" (click)="closeMobile.emit()"></div>
+}

@@ -1,6 +1,6 @@
 package com.lifeos.telemetry.session.scheduler;
 
-import com.lifeos.common.service.DiscordAlertService;
+import com.lifeos.shared.service.DiscordAlertService;
 import com.lifeos.session.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -5,25 +5,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   selector: 'app-mobile-nav',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
-  template: `
-    <nav class="mobile-nav">
-      @for (item of items; track item.route) {
-        <a class="mobile-nav__item" [routerLink]="item.route" routerLinkActive="mobile-nav__item--active">
-          <span class="mobile-nav__icon" [innerHTML]="item.icon"></span>
-          <span class="mobile-nav__label">{{ item.label }}</span>
-        </a>
-      }
-    </nav>
-  `,
-  styles: [`
-    .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--sidebar-bg); backdrop-filter: blur(var(--blur-lg)); border-top: 1px solid var(--sidebar-border); padding: 6px 0 env(safe-area-inset-bottom, 8px); }
-    .mobile-nav__item { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; padding: 6px 0; color: var(--text-tertiary); transition: color var(--transition-fast); text-decoration: none; }
-    .mobile-nav__item--active { color: var(--accent-primary); }
-    .mobile-nav__icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
-    .mobile-nav__icon :deep(svg) { width: 22px; height: 22px; }
-    .mobile-nav__label { font-size: 10px; font-weight: 500; }
-    @media (max-width: 768px) { .mobile-nav { display: flex; } }
-  `],
+  templateUrl: './mobile-nav.component.html',
+  styleUrl: './mobile-nav.component.css',
 })
 export class MobileNavComponent {
   items = [

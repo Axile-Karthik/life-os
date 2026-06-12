@@ -1,4 +1,4 @@
-package com.lifeos.exception;
+package com.lifeos.shared.kernel.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

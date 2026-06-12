@@ -1,6 +1,6 @@
 package com.lifeos.observability.log.scheduler;
 
-import com.lifeos.common.service.CleanupService;
+import com.lifeos.shared.service.CleanupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

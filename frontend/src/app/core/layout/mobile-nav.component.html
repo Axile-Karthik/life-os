@@ -1,0 +1,8 @@
+<nav class="mobile-nav">
+  @for (item of items; track item.route) {
+    <a class="mobile-nav__item" [routerLink]="item.route" routerLinkActive="mobile-nav__item--active">
+      <span class="mobile-nav__icon" [innerHTML]="item.icon"></span>
+      <span class="mobile-nav__label">{{ item.label }}</span>
+    </a>
+  }
+</nav>
