@@ -47,6 +47,8 @@ app:
   cleanup:
     logs-retention-days: 7
     metrics-retention-days: 30
+  storage:
+    local-dir: ${LOCAL_STORAGE_DIR:uploads}
 
 igdb:
   client-id: kvwvuctjlqx1w06ve14s51kgnfx5dv

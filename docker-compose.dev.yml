@@ -15,7 +15,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: localpassword
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - lifeos_dev_pgdata:/var/lib/postgresql/data
 

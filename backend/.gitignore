@@ -9,6 +9,8 @@ build/
 *.ipr
 *.iws
 .vscode/
+*.swp
+*~
 
 # OS
 .DS_Store
@@ -16,6 +18,26 @@ Thumbs.db
 
 # Env
 .env
+.env.*
 
 # Docker
 docker-compose.override.yml
+
+# Compiled classes
+bin/
+out/
+
+# Logs
+*.log
+logs/
+
+# File uploads (local storage)
+uploads/
+
+# Postman collections (keep in a separate repo or docs folder)
+*.postman_collection.json
+lifeos_pm_dashboard_postman_collection.json
+
+# Crash & heap dumps
+hs_err_pid*
+*.hprof
